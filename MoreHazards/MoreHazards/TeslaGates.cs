@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
-
+using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using HarmonyLib;
 using Respawning;
@@ -17,16 +18,15 @@ namespace MoreHazards
     public class TeslaGateManager
     {
         private static Dictionary<Vector3,bool> TeslaStates = new Dictionary<Vector3, bool>();
-        public static List<RoleType> IgnoredByTesla { get; }
+        public static List<RoleType> IgnoredByTesla { get; } = new List<RoleType>();
+
+        private static readonly TeslaConfig Config = MoreHazards.Instance.Config.Tesla;
         public static void LoadRolesFromConfig(Config config)
         {
             IgnoredByTesla.Clear();
-            foreach (var role in config.IgnoredRoles)
+            foreach (var role in config.Tesla.IgnoredRoles)
             {
-                if (RoleType.TryParse(role, false, out RoleType type))
-                {
-                    IgnoredByTesla.Add(type);
-                }
+                IgnoredByTesla.Add(role);
             }
         }
 
@@ -62,7 +62,7 @@ namespace MoreHazards
 
         public static void OnRoundStart()
         {
-            var Config = MoreHazards.Instance.Config;
+
             DisableRandomGates(
                 Config.TeslaGateDisableChance,
                 Config.MaxDisabledTeslaGates,
@@ -78,15 +78,17 @@ namespace MoreHazards
         public static void OnTeslaTrigger(TriggeringTeslaEventArgs ev)
         {
             //If module is disabled
-            if (!MoreHazards.Instance.Config.DisabledTeslas)
+            if (!Config.Enabled)
                 return;
-
 
             if (IgnoredByTesla.Contains(ev.Player.Role))
             {
                 ev.IsTriggerable = false;
                 return;
             }
+            
+            if (!Config.DisablingTeslas)
+                return;
 
             foreach (var tesla in TeslaStates)
             {
