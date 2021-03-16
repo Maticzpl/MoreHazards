@@ -81,6 +81,7 @@ namespace MoreHazards
             if (!Config.Enabled)
                 return;
 
+
             if (IgnoredByTesla.Contains(ev.Player.Role))
             {
                 ev.IsTriggerable = false;

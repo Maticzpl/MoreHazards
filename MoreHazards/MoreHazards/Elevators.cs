@@ -21,20 +21,27 @@ namespace MoreHazards
 
             CoroutineHandle = Timing.RunCoroutine(Timer());
         }
+
+        public static IEnumerator<float> Timer()
+        {
+            while (Round.IsStarted)
+            {
+                yield return Timing.WaitForSeconds(Config.RandomEventTiming.GetCooldown());
+
+
+                int duration = Config.RandomEventTiming.GetDuration();
+                LiftBreakdown(duration);
+
+                if (Config.EnableCassieMessage)
+                    Config.CassieMessage.Speak();
+
+                yield return Timing.WaitForSeconds(duration);
+                FixLifts();
+            }
+        }
         public static void OnRoundEnd(RoundEndedEventArgs ev)
         {
             Timing.KillCoroutines(CoroutineHandle);
-        }
-
-        private static IEnumerator<float> Timer()
-        {
-            yield return Timing.WaitForSeconds(Config.RandomEventTiming.GetCooldown());
-
-
-            int duration = Config.RandomEventTiming.GetDuration();
-            LiftBreakdown(duration);
-            yield return Timing.WaitForSeconds(duration);
-            FixLifts();
         }
         public static void LiftBreakdown(int duration)
         {
@@ -43,15 +50,14 @@ namespace MoreHazards
                 if (!Config.BreakableElevators.Contains(lift.Type()))
                     continue;
 
-                var rng = RandomGenerator.GetInt16(0, 100);
+                
+                var rng = UnityEngine.Random.Range(0, 100);
 
                 if (rng > Config.ChancePerElevator)
                     continue;
 
                 lift.operative = false;
 
-                if (Config.EnableCassieMessage)
-                    Config.CassieMessage.Speak();
 
                 if (Config.BlackoutRoom)
                 {
