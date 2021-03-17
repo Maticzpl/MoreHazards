@@ -10,15 +10,16 @@ using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using MEC;
+using Warhead = Exiled.Events.Handlers.Warhead;
 
 namespace MoreHazards
 {
-    public class ElevatorEventManager
+    public class ElevatorEventManager : EventManager
     {
-        private static CoroutineHandle CoroutineHandle;
-        private static readonly ElevatorsConfig Config = MoreHazards.Instance.Config.Elevators;
+        private CoroutineHandle CoroutineHandle;
+        private readonly ElevatorsConfig Config = MoreHazards.Instance.Config.Elevators;
 
-        private static readonly Dictionary<ElevatorType, (RoomType lower, RoomType upper)> ElevatorToRoomsLookup = 
+        private readonly Dictionary<ElevatorType, (RoomType lower, RoomType upper)> ElevatorToRoomsLookup = 
             new Dictionary<ElevatorType, (RoomType lower, RoomType upper)>
             {
                 [ElevatorType.LczA] = (RoomType.LczChkpA, RoomType.HczChkpA),
@@ -29,15 +30,33 @@ namespace MoreHazards
                 [ElevatorType.GateB] = (RoomType.EzGateB, RoomType.Unknown)
             };
 
-        public static void OnRoundStart()
+        public ElevatorEventManager()
+        {
+            Warhead.Detonated += OnDetonated;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Warhead.Detonated -= OnDetonated;
+        }
+
+        public override void OnRoundStart()
         {
             if (!Config.Enabled)
                 return;
 
             CoroutineHandle = Timing.RunCoroutine(Timer());
         }
-
-        public static IEnumerator<float> Timer()
+        public override void OnRoundEnd(RoundEndedEventArgs ev)
+        {
+            Timing.KillCoroutines(CoroutineHandle);
+        }
+        public void OnDetonated()
+        {
+            Timing.KillCoroutines(CoroutineHandle);
+        }
+        public IEnumerator<float> Timer()
         {
             while (Round.IsStarted)
             {
@@ -54,15 +73,7 @@ namespace MoreHazards
                 FixLifts();
             }
         }
-        public static void OnRoundEnd(RoundEndedEventArgs ev)
-        {
-            Timing.KillCoroutines(CoroutineHandle);
-        }
-        public static void OnDetonated()
-        {
-            Timing.KillCoroutines(CoroutineHandle);
-        }
-        public static void LiftBreakdown(int duration)
+        public void LiftBreakdown(int duration)
         {
             foreach (var lift in Map.Lifts)
             {
@@ -89,8 +100,7 @@ namespace MoreHazards
                 }
             }
         }
-
-        public static void FixLifts()
+        public void FixLifts()
         {
             foreach (var lift in Map.Lifts)
             {

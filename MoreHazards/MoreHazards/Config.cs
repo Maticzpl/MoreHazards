@@ -22,6 +22,9 @@ namespace MoreHazards
         [Description("Elevators Module")]
         public ElevatorsConfig Elevators { get; set; } = new ElevatorsConfig();
 
+        [Description("Door Module")]
+        public DoorConfig Doors { get; set; } = new DoorConfig();
+
         [Description("Show debug messages in console.")]
         public bool Debug { get; set; } = false;
     }
@@ -70,4 +73,8 @@ namespace MoreHazards
         public short TeslaGateDisableChance { get; set; } = 33;
     }
 
+    public class DoorConfig
+    {
+        public bool Enabled { get; set; } = false;
+    }
 }

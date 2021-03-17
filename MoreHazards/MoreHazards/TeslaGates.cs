@@ -12,16 +12,17 @@ using HarmonyLib;
 using Respawning;
 using UnityEngine;
 using Map = Exiled.API.Features.Map;
+using Player = Exiled.Events.Handlers.Player;
 
 namespace MoreHazards
 {
-    public class TeslaGateManager
+    public class TeslaGateManager : EventManager
     {
-        private static Dictionary<Vector3,bool> TeslaStates = new Dictionary<Vector3, bool>();
-        public static List<RoleType> IgnoredByTesla { get; } = new List<RoleType>();
+        private Dictionary<Vector3,bool> TeslaStates = new Dictionary<Vector3, bool>();
+        public List<RoleType> IgnoredByTesla { get; } = new List<RoleType>();
 
-        private static readonly TeslaConfig Config = MoreHazards.Instance.Config.Tesla;
-        public static void LoadRolesFromConfig(Config config)
+        private readonly TeslaConfig Config = MoreHazards.Instance.Config.Tesla;
+        public void LoadRolesFromConfig(Config config)
         {
             IgnoredByTesla.Clear();
             foreach (var role in config.Tesla.IgnoredRoles)
@@ -30,7 +31,7 @@ namespace MoreHazards
             }
         }
 
-        public static void SetTeslaEnabled(TeslaGate tesla,bool state)
+        public void SetTeslaEnabled(TeslaGate tesla,bool state)
         {
             bool exists = TeslaStates.ContainsKey(tesla.gameObject.transform.position);
 
@@ -40,7 +41,7 @@ namespace MoreHazards
                 TeslaStates.Add(tesla.gameObject.transform.position, state);
         }
 
-        public static void DisableRandomGates(short ChancePerGate, short MaxDisabledGates, short GatesRequired)
+        public void DisableRandomGates(short ChancePerGate, short MaxDisabledGates, short GatesRequired)
         {
             if (Map.TeslaGates.Count < GatesRequired)
                 return;
@@ -60,7 +61,19 @@ namespace MoreHazards
             
         }
 
-        public static void OnRoundStart()
+        public TeslaGateManager()
+        {
+            Player.TriggeringTesla += OnTeslaTrigger;
+            LoadRolesFromConfig(MoreHazards.Instance.Config);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Player.TriggeringTesla -= OnTeslaTrigger;
+        }
+
+        public override void OnRoundStart()
         {
 
             DisableRandomGates(
@@ -69,13 +82,13 @@ namespace MoreHazards
                 Config.MinTeslaGates
                 );
         }
-        public static void OnRoundEnd(RoundEndedEventArgs ev)
+        public override void OnRoundEnd(RoundEndedEventArgs ev)
         {
             TeslaStates = new Dictionary<Vector3, bool>();
             IgnoredByTesla.Clear();
         }
 
-        public static void OnTeslaTrigger(TriggeringTeslaEventArgs ev)
+        public void OnTeslaTrigger(TriggeringTeslaEventArgs ev)
         {
             //If module is disabled
             if (!Config.Enabled)

@@ -30,6 +30,7 @@ namespace MoreHazards
         {
         }
 
+        private static List<EventManager> EventHandlers = new List<EventManager>();
         public static MoreHazards Instance => singleton;
 
         public override PluginPriority Priority { get; } = PluginPriority.Medium;
@@ -39,16 +40,9 @@ namespace MoreHazards
         {
             base.OnEnabled();
 
-            TeslaGateManager.LoadRolesFromConfig(Config);
-
-            Handlers.Server.RoundStarted += TeslaGateManager.OnRoundStart;
-            Handlers.Server.RoundEnded += TeslaGateManager.OnRoundEnd;
-            Handlers.Player.TriggeringTesla += TeslaGateManager.OnTeslaTrigger;
-
-            Handlers.Server.RoundStarted += ElevatorEventManager.OnRoundStart;
-            Handlers.Server.RoundEnded += ElevatorEventManager.OnRoundEnd;
-
-            Handlers.Warhead.Detonated += ElevatorEventManager.OnDetonated;
+            EventHandlers.Add(new TeslaGateManager());
+            EventHandlers.Add(new ElevatorEventManager());
+            EventHandlers.Add(new DoorEventManager());
         }
 
 
@@ -56,12 +50,7 @@ namespace MoreHazards
         {
             base.OnDisabled();
 
-            Handlers.Server.RoundStarted -= TeslaGateManager.OnRoundStart;
-            Handlers.Server.RoundEnded -= TeslaGateManager.OnRoundEnd;
-            Handlers.Player.TriggeringTesla -= TeslaGateManager.OnTeslaTrigger;
-
-            Handlers.Server.RoundStarted -= ElevatorEventManager.OnRoundStart;
-            Handlers.Server.RoundEnded -= ElevatorEventManager.OnRoundEnd;
+            EventHandlers.Clear();
         }
 
     }
