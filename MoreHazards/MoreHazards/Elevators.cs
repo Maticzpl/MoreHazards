@@ -58,6 +58,10 @@ namespace MoreHazards
         {
             Timing.KillCoroutines(CoroutineHandle);
         }
+        public static void OnDetonated()
+        {
+            Timing.KillCoroutines(CoroutineHandle);
+        }
         public static void LiftBreakdown(int duration)
         {
             foreach (var lift in Map.Lifts)
@@ -78,8 +82,10 @@ namespace MoreHazards
                     var lower = ElevatorToRoomsLookup[lift.Type()].lower;
                     var upper = ElevatorToRoomsLookup[lift.Type()].upper;
 
-                    Map.Rooms.First(r => r.Type != RoomType.Unknown && (r.Type == lower || r.Type == upper))
-                        .TurnOffLights(duration);
+                    Map.Rooms.First(r => r.Type == lower ).TurnOffLights(duration);
+
+                    if (upper != RoomType.Unknown)
+                        Map.Rooms.First(r => r.Type == upper).TurnOffLights(duration);
                 }
             }
         }
@@ -92,26 +98,5 @@ namespace MoreHazards
             }
 
         }
-        //lift.Type()
-
-        
-        public static ValueTuple<RoomType, RoomType> ElevatorToRooms(ElevatorType elevator)
-        {
-            switch (elevator)
-            {
-                case ElevatorType.LczA:
-                    (RoomType lower, RoomType upper) lcza = (RoomType.LczChkpA, RoomType.HczChkpA);
-                    return lcza;
-
-                case ElevatorType.LczB:
-                    (RoomType lower, RoomType upper) lczb = (RoomType.LczChkpA, RoomType.HczChkpA);
-                    return lczb;
-
-                default:
-                    (RoomType lower, RoomType upper) def = (RoomType.Unknown, RoomType.Unknown);
-                    return def;
-            }
-        }
-
     }
 }

@@ -9,6 +9,7 @@ using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Loader;
 using Exiled.Events;
+using Exiled.Events.EventArgs;
 using HarmonyLib;
 using Handlers = Exiled.Events.Handlers;
 using MEC;
@@ -46,6 +47,8 @@ namespace MoreHazards
 
             Handlers.Server.RoundStarted += ElevatorEventManager.OnRoundStart;
             Handlers.Server.RoundEnded += ElevatorEventManager.OnRoundEnd;
+
+            Handlers.Warhead.Detonated += ElevatorEventManager.OnDetonated;
         }
 
 

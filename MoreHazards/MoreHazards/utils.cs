@@ -57,10 +57,10 @@ namespace MoreHazards
         public string Text { get; set; } = "";
 
         [Description("Cassie Message Glitch Chance (0-100)")]
-        public int Glitches { get; set; } = 0;
+        public int Glitches { get; set; } = 10;
 
         [Description("Cassie Message Jam Chance (0-100)")]
-        public int Jams { get; set; } = 0;
+        public int Jams { get; set; } = 10;
 
         public void Speak()
         {
