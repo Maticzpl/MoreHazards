@@ -32,7 +32,7 @@ namespace MoreHazards
         [Description("Elevator Breakdown Module")]
         public bool Enabled { get; set; } = false;
 
-        [Description("List of all the elevators that can break down")]
+        [Description("List of all the elevators that can break down. AVAILABLE: LczA LczB Nuke Scp049 GateA GateB")]
         public List<ElevatorType> BreakableElevators { get; set; } = new List<ElevatorType>( new []{ElevatorType.LczA, ElevatorType.LczB});
 
         [Description("Timing of the elevator break event")]

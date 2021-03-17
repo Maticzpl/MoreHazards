@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
@@ -14,6 +17,18 @@ namespace MoreHazards
     {
         private static CoroutineHandle CoroutineHandle;
         private static readonly ElevatorsConfig Config = MoreHazards.Instance.Config.Elevators;
+
+        private static readonly Dictionary<ElevatorType, (RoomType lower, RoomType upper)> ElevatorToRoomsLookup = 
+            new Dictionary<ElevatorType, (RoomType lower, RoomType upper)>
+            {
+                [ElevatorType.LczA] = (RoomType.LczChkpA, RoomType.HczChkpA),
+                [ElevatorType.LczB] = (RoomType.LczChkpB, RoomType.HczChkpB),
+                [ElevatorType.Nuke] = (RoomType.HczNuke, RoomType.Unknown),
+                [ElevatorType.Scp049] = (RoomType.Hcz049, RoomType.Unknown),
+                [ElevatorType.GateA] = (RoomType.EzGateA, RoomType.Unknown),
+                [ElevatorType.GateB] = (RoomType.EzGateB, RoomType.Unknown)
+            };
+
         public static void OnRoundStart()
         {
             if (!Config.Enabled)
@@ -58,10 +73,13 @@ namespace MoreHazards
 
                 lift.operative = false;
 
-
                 if (Config.BlackoutRoom)
                 {
-                    //do blackout here
+                    var lower = ElevatorToRoomsLookup[lift.Type()].lower;
+                    var upper = ElevatorToRoomsLookup[lift.Type()].upper;
+
+                    Map.Rooms.First(r => r.Type != RoomType.Unknown && (r.Type == lower || r.Type == upper))
+                        .TurnOffLights(duration);
                 }
             }
         }
@@ -72,8 +90,28 @@ namespace MoreHazards
             {
                 lift.operative = true;
             }
+
         }
         //lift.Type()
+
+        
+        public static ValueTuple<RoomType, RoomType> ElevatorToRooms(ElevatorType elevator)
+        {
+            switch (elevator)
+            {
+                case ElevatorType.LczA:
+                    (RoomType lower, RoomType upper) lcza = (RoomType.LczChkpA, RoomType.HczChkpA);
+                    return lcza;
+
+                case ElevatorType.LczB:
+                    (RoomType lower, RoomType upper) lczb = (RoomType.LczChkpA, RoomType.HczChkpA);
+                    return lczb;
+
+                default:
+                    (RoomType lower, RoomType upper) def = (RoomType.Unknown, RoomType.Unknown);
+                    return def;
+            }
+        }
 
     }
 }

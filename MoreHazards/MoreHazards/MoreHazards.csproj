@@ -86,7 +86,7 @@
     <Compile Include="MoreHazards.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TeslaGates.cs" />
-    <Compile Include="utils.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
