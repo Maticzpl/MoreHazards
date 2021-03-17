@@ -49,7 +49,30 @@ namespace MoreHazards
             return UnityEngine.Random.Range(MinCooldown, MaxCooldown);
         }
     }
+    public class RandomInterval
+    {
+        public RandomInterval()
+        {
+            MinDelay = 120;
+            MaxDelay = 300;
+        }
+        public RandomInterval( int min, int max)
+        {
+            MinDelay = min;
+            MaxDelay = max;
+        }
 
+        [Description("Min Delay between calling this event")]
+        public int MinDelay { get; set; }
+
+        [Description("Max Delay between calling this event")]
+        public int MaxDelay { get; set; }
+
+        public int GetInterval()
+        {
+            return UnityEngine.Random.Range(MinDelay, MaxDelay);
+        }
+    }
     public class CassieAnnouncement
     {
 
@@ -65,6 +88,21 @@ namespace MoreHazards
         public void Speak()
         {
             Cassie.GlitchyMessage(Text, Glitches, Jams);
+        }
+    }
+
+    public class CollectionUtils<TValue>
+    {
+        public static TValue GetRandomElement(ICollection<TValue> collection)
+        {
+            int index = UnityEngine.Random.Range(0,collection.Count-1);
+            return collection.ElementAt(index);
+        }
+        public static TValue GetRandomElement(IEnumerable<TValue> enumerable)
+        {
+            var collection = (enumerable as IReadOnlyList<TValue>) ?? enumerable.ToArray();
+            int index = UnityEngine.Random.Range(0, collection.Count - 1);
+            return collection[index];
         }
     }
 }

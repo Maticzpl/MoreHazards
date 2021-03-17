@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Exiled.API.Enums;
+using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
+using Interactables.Interobjects;
+using Interactables.Interobjects.DoorUtils;
 using MEC;
 using Warhead = Exiled.Events.Handlers.Warhead;
 
@@ -21,7 +24,7 @@ namespace MoreHazards
             Warhead.Detonated += OnDetonated;
         }
 
-         public override void Dispose()
+        public override void Dispose()
         {
             base.Dispose();
             Warhead.Detonated -= OnDetonated;
@@ -47,7 +50,17 @@ namespace MoreHazards
         {
             while (Round.IsStarted)
             {
-                yield return Timing.WaitForSeconds(1);
+                yield return Timing.WaitForSeconds(Config.RandomEventTiming.GetInterval());
+                foreach (var player in Player.List)
+                {
+                    if (UnityEngine.Random.Range(0, 100) > Config.PerPlayerChance)
+                        continue;
+
+                    //random door of the room the player is inside
+                    var door = CollectionUtils<DoorVariant>.GetRandomElement((Map.FindParentRoom(player.GameObject).Doors));
+                
+                    door.NetworkTargetState = false;
+                }
             }
         }
     }

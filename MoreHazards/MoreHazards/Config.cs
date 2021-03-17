@@ -16,13 +16,13 @@ namespace MoreHazards
         [Description("Is plugin enabled")]
         public bool IsEnabled { get; set; } = true;
 
-        [Description("Tesla Gates Module")]
+        [Description("Tesla Gates Module - Disable Tesla Gates for specific roles, Disable random teslas completly")]
         public TeslaConfig Tesla { get; set; } = new TeslaConfig();
 
-        [Description("Elevators Module")]
+        [Description("Elevators Module - Once in a while an elevator can breakdown.")]
         public ElevatorsConfig Elevators { get; set; } = new ElevatorsConfig();
 
-        [Description("Door Module")]
+        [Description("Door Module - Once in a while a random door will close.")]
         public DoorConfig Doors { get; set; } = new DoorConfig();
 
         [Description("Show debug messages in console.")]
@@ -76,5 +76,11 @@ namespace MoreHazards
     public class DoorConfig
     {
         public bool Enabled { get; set; } = false;
+
+        [Description("Timing of the door malfunction event")]
+        public RandomInterval RandomEventTiming { get; set; } = new RandomInterval(10,30);
+
+        [Description("Chance of a door closing per player")]
+        public int PerPlayerChance { get; set; } = 20;
     }
 }
