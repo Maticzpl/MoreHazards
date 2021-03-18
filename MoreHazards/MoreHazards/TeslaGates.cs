@@ -118,7 +118,6 @@ namespace MoreHazards
                 if (Vector3.Distance(ev.Player.Position, tesla.Key) < 7)
                 {
                     ev.IsTriggerable = false;
-                    Debug.Log($"Player crossed disabled tesla");
                     return;
                 }
             }

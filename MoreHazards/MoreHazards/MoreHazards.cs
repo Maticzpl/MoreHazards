@@ -24,7 +24,7 @@ namespace MoreHazards
 
         public override string Author { get; } = "Maticzpl";
         public override string Name { get; } = "More Hazards";
-        public override Version Version { get; } = new Version(0, 1, 0);
+        public override Version Version { get; } = new Version(0, 1, 2);
         public override Version RequiredExiledVersion { get; } = new Version(2, 9, 0);
 
         private MoreHazards()
