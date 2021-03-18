@@ -16,7 +16,7 @@ using Player = Exiled.Events.Handlers.Player;
 
 namespace MoreHazards
 {
-    public class TeslaGateManager : EventManager
+    public class TeslaGateManager : LogicManager
     {
         private Dictionary<Vector3,bool> TeslaStates = new Dictionary<Vector3, bool>();
         public List<RoleType> IgnoredByTesla { get; } = new List<RoleType>();
@@ -27,6 +27,7 @@ namespace MoreHazards
             IgnoredByTesla.Clear();
             foreach (var role in config.Tesla.IgnoredRoles)
             {
+                Debug.Log($"Tesla ignore role: {role}");
                 IgnoredByTesla.Add(role);
             }
         }
@@ -59,6 +60,8 @@ namespace MoreHazards
                 SetTeslaEnabled(tesla, false);
             }
             
+            Debug.Log($"Disabled {DisabledGates} tesla gates");
+
         }
 
         public TeslaGateManager()
@@ -75,7 +78,6 @@ namespace MoreHazards
 
         public override void OnRoundStart()
         {
-
             DisableRandomGates(
                 Config.TeslaGateDisableChance,
                 Config.MaxDisabledTeslaGates,
@@ -98,6 +100,7 @@ namespace MoreHazards
             if (IgnoredByTesla.Contains(ev.Player.Role))
             {
                 ev.IsTriggerable = false;
+                Debug.Log($"Tesla ignored by player role");
                 return;
             }
             
@@ -115,6 +118,7 @@ namespace MoreHazards
                 if (Vector3.Distance(ev.Player.Position, tesla.Key) < 7)
                 {
                     ev.IsTriggerable = false;
+                    Debug.Log($"Player crossed disabled tesla");
                     return;
                 }
             }

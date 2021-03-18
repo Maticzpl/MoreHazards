@@ -14,12 +14,12 @@ using Warhead = Exiled.Events.Handlers.Warhead;
 
 namespace MoreHazards
 {
-    class DoorEventManager : EventManager
+    class DoorLogicManager : LogicManager
     {
         private static CoroutineHandle CoroutineHandle;
         private static readonly DoorConfig Config = MoreHazards.Instance.Config.Doors;
 
-        public DoorEventManager()
+        public DoorLogicManager()
         {
             Warhead.Detonated += OnDetonated;
         }
@@ -30,7 +30,7 @@ namespace MoreHazards
             Warhead.Detonated -= OnDetonated;
         }
 
-         public override void OnRoundStart()
+        public override void OnRoundStart()
         {
             if (!Config.Enabled)
                 return;
@@ -58,8 +58,9 @@ namespace MoreHazards
 
                     //random door of the room the player is inside
                     var door = CollectionUtils<DoorVariant>.GetRandomElement((Map.FindParentRoom(player.GameObject).Doors));
-                
+                    
                     door.NetworkTargetState = false;
+                    Debug.Log("Door closed on player:"+player.Nickname);
                 }
             }
         }

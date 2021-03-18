@@ -90,19 +90,34 @@ namespace MoreHazards
             Cassie.GlitchyMessage(Text, Glitches, Jams);
         }
     }
-
     public class CollectionUtils<TValue>
     {
-        public static TValue GetRandomElement(ICollection<TValue> collection)
+       /* public static TValue GetRandomElement(IReadOnlyCollection<TValue> collection)
         {
             int index = UnityEngine.Random.Range(0,collection.Count-1);
             return collection.ElementAt(index);
         }
+        public static TValue GetRandomElement(List<TValue> collection)
+        {
+            int index = UnityEngine.Random.Range(0, collection.Count - 1);
+            return collection[index];
+        }*/
         public static TValue GetRandomElement(IEnumerable<TValue> enumerable)
         {
             var collection = (enumerable as IReadOnlyList<TValue>) ?? enumerable.ToArray();
             int index = UnityEngine.Random.Range(0, collection.Count - 1);
             return collection[index];
+        }
+    }
+
+    public class Debug
+    {
+        public static void Log(object msg)
+        {
+            if (MoreHazards.Instance.Config.Debug)
+            {
+                Exiled.API.Features.Log.Debug(msg);
+            }
         }
     }
 }

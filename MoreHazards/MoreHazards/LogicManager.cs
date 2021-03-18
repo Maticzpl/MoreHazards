@@ -10,9 +10,9 @@ using Handlers = Exiled.Events.Handlers;
 
 namespace MoreHazards
 {
-    public class EventManager : IDisposable
+    public class LogicManager : IDisposable
     {
-        public EventManager()
+        public LogicManager()
         {
             Handlers.Server.RoundStarted += OnRoundStart;
             Handlers.Server.RoundEnded += OnRoundEnd;

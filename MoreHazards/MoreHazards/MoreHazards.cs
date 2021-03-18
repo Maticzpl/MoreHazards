@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using CustomPlayerEffects;
 using Discord;
 using Exiled.API.Enums;
 using Exiled.API.Features;
@@ -23,14 +24,14 @@ namespace MoreHazards
 
         public override string Author { get; } = "Maticzpl";
         public override string Name { get; } = "More Hazards";
-        public override Version Version { get; } = new Version(1, 0, 0);
+        public override Version Version { get; } = new Version(0, 1, 0);
         public override Version RequiredExiledVersion { get; } = new Version(2, 9, 0);
 
         private MoreHazards()
         {
         }
 
-        private static List<EventManager> EventHandlers = new List<EventManager>();
+        private static List<LogicManager> LogicHandlers = new List<LogicManager>();
         public static MoreHazards Instance => singleton;
 
         public override PluginPriority Priority { get; } = PluginPriority.Medium;
@@ -40,9 +41,9 @@ namespace MoreHazards
         {
             base.OnEnabled();
 
-            EventHandlers.Add(new TeslaGateManager());
-            EventHandlers.Add(new ElevatorEventManager());
-            EventHandlers.Add(new DoorEventManager());
+            LogicHandlers.Add(new TeslaGateManager());
+            LogicHandlers.Add(new ElevatorLogicManager());
+            LogicHandlers.Add(new DoorLogicManager());
         }
 
 
@@ -50,7 +51,7 @@ namespace MoreHazards
         {
             base.OnDisabled();
 
-            EventHandlers.Clear();
+            LogicHandlers.Clear();
         }
 
     }

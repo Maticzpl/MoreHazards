@@ -14,7 +14,7 @@ using Warhead = Exiled.Events.Handlers.Warhead;
 
 namespace MoreHazards
 {
-    public class ElevatorEventManager : EventManager
+    public class ElevatorLogicManager : LogicManager
     {
         private CoroutineHandle CoroutineHandle;
         private readonly ElevatorsConfig Config = MoreHazards.Instance.Config.Elevators;
@@ -30,7 +30,7 @@ namespace MoreHazards
                 [ElevatorType.GateB] = (RoomType.EzGateB, RoomType.Unknown)
             };
 
-        public ElevatorEventManager()
+        public ElevatorLogicManager()
         {
             Warhead.Detonated += OnDetonated;
         }
@@ -87,6 +87,8 @@ namespace MoreHazards
                     continue;
 
                 lift.operative = false;
+
+                Debug.Log($"Elevator {lift.Type()} disabled for {duration}");
 
                 if (Config.BlackoutRoom)
                 {
