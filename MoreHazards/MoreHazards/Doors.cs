@@ -16,51 +16,87 @@ namespace MoreHazards
 {
     class DoorLogicManager : LogicManager
     {
-        private static CoroutineHandle CoroutineHandle;
-        private static readonly DoorConfig Config = MoreHazards.Instance.Config.Doors;
+        private static CoroutineHandle RandomMalfunctionHandle;
+        private static CoroutineHandle FullBreakdownHandle;
+        private static readonly DoorConfig MalfunctionConfig = MoreHazards.Instance.Config.DoorMalfunction;
+        private static readonly DoorSystemBreakdownConfig BreakdownConfig = MoreHazards.Instance.Config.DoorSystemBreakdown;
 
         public DoorLogicManager()
         {
-            Warhead.Detonated += OnDetonated;
+            Warhead.Detonated += TerminateCoroutines;
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            Warhead.Detonated -= OnDetonated;
+            Warhead.Detonated -= TerminateCoroutines;
         }
 
         public override void OnRoundStart()
         {
-            if (!Config.Enabled)
-                return;
+            if(MalfunctionConfig.Enabled)
+                RandomMalfunctionHandle = Timing.RunCoroutine(RandomDoorMalfunction());
 
-            CoroutineHandle = Timing.RunCoroutine(Timer());
+            if (BreakdownConfig.Enabled)
+                FullBreakdownHandle = Timing.RunCoroutine(FullDoorBreakdown());
         }
         public override void OnRoundEnd(RoundEndedEventArgs ev)
         {
-            Timing.KillCoroutines(CoroutineHandle);
+            TerminateCoroutines();
         }
-        public void OnDetonated()
+        public void TerminateCoroutines()
         {
-            Timing.KillCoroutines(CoroutineHandle);
+            Timing.KillCoroutines(RandomMalfunctionHandle);
+
+            Timing.KillCoroutines(FullBreakdownHandle);
         }
 
-        public IEnumerator<float> Timer()
+        public IEnumerator<float> RandomDoorMalfunction()
         {
             while (Round.IsStarted)
             {
-                yield return Timing.WaitForSeconds(Config.RandomEventTiming.GetInterval());
+                yield return Timing.WaitForSeconds(MalfunctionConfig.RandomDoorMalfunctionTiming.GetInterval());
                 foreach (var player in Player.List)
                 {
-                    if (UnityEngine.Random.Range(0, 100) > Config.PerPlayerChance)
+                    if (MalfunctionConfig.IgnoredRoles.Contains(player.Role))
+                        continue;
+
+                    if (UnityEngine.Random.Range(0, 100) > MalfunctionConfig.PerPlayerChance)
                         continue;
 
                     //random door of the room the player is inside
                     var door = CollectionUtils<DoorVariant>.GetRandomElement((Map.FindParentRoom(player.GameObject).Doors));
                     
                     door.NetworkTargetState = false;
-                    Debug.Log("Door closed on player:"+player.Nickname);
+                    Log.Debug("Door closed on player:"+player.Nickname);
+                }
+            }
+        }
+
+        public IEnumerator<float> FullDoorBreakdown()
+        {
+            while (Round.IsStarted)
+            {
+                yield return Timing.WaitForSeconds(BreakdownConfig.FullDoorSystemBreakdownTiming.GetCooldown());
+
+                foreach (var door in Map.Doors)
+                {
+                    if (BreakdownConfig.CloseBeforeLocking)
+                        door.NetworkTargetState = false;
+
+                    door.ServerChangeLock(DoorLockReason.SpecialDoorFeature,true);
+                }
+
+                Log.Debug("Door system breakdown",MoreHazards.Instance.Config.Debug);
+
+                if (BreakdownConfig.UseCassieMessage)
+                    BreakdownConfig.CassieMessageOnBreakdown.Speak();
+
+                yield return Timing.WaitForSeconds(BreakdownConfig.FullDoorSystemBreakdownTiming.GetDuration());
+
+                foreach (var door in Map.Doors)
+                {
+                    door.ServerChangeLock(DoorLockReason.SpecialDoorFeature, false);
                 }
             }
         }

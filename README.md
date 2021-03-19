@@ -1,7 +1,8 @@
 
 [![Github release](https://img.shields.io/github/tag/Maticzpl/MoreHazards.svg?colorB=2146bf&label=Version)](https://github.com/Maticzpl/MoreHazards/releases)
 [![Github commits](https://img.shields.io/github/last-commit/Maticzpl/MoreHazards?color=green&label=Last%20Commit)](https://github.com/Maticzpl/MoreHazards/commits/main)
-![Github downloads](https://img.shields.io/github/downloads/Maticzpl/MoreHazards/total)
+[![Github downloads](https://img.shields.io/github/downloads/Maticzpl/MoreHazards/total?label=Downloads)()](https://github.com/Maticzpl/MoreHazards/releases)
+
 # MoreHazards
 This plugin adds in mainly passive / enveriomental hazards.  
 **More Hazards is in a very early stage of development.**

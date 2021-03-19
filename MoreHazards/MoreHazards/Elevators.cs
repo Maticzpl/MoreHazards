@@ -88,7 +88,7 @@ namespace MoreHazards
 
                 lift.operative = false;
 
-                Debug.Log($"Elevator {lift.Type()} disabled for {duration}");
+                Log.Debug($"Elevator {lift.Type()} disabled for {duration}",MoreHazards.Instance.Config.Debug);
 
                 if (Config.BlackoutRoom)
                 {

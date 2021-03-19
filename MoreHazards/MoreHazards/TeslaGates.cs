@@ -27,7 +27,7 @@ namespace MoreHazards
             IgnoredByTesla.Clear();
             foreach (var role in config.Tesla.IgnoredRoles)
             {
-                Debug.Log($"Tesla ignore role: {role}");
+                Log.Debug($"Tesla ignore role: {role}", MoreHazards.Instance.Config.Debug);
                 IgnoredByTesla.Add(role);
             }
         }
@@ -60,7 +60,7 @@ namespace MoreHazards
                 SetTeslaEnabled(tesla, false);
             }
             
-            Debug.Log($"Disabled {DisabledGates} tesla gates");
+            Log.Debug($"Disabled {DisabledGates} tesla gates", MoreHazards.Instance.Config.Debug);
 
         }
 
@@ -100,7 +100,7 @@ namespace MoreHazards
             if (IgnoredByTesla.Contains(ev.Player.Role))
             {
                 ev.IsTriggerable = false;
-                Debug.Log($"Tesla ignored by player role");
+                Log.Debug($"Tesla ignored by player role", MoreHazards.Instance.Config.Debug);
                 return;
             }
             

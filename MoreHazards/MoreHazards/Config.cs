@@ -22,8 +22,12 @@ namespace MoreHazards
         [Description("Elevators Module - Once in a while an elevator can breakdown.")]
         public ElevatorsConfig Elevators { get; set; } = new ElevatorsConfig();
 
-        [Description("Door Module - Once in a while a random door will close.")]
-        public DoorConfig Doors { get; set; } = new DoorConfig();
+        [Description("Door Module - Will close a random door near random players")]
+        public DoorConfig DoorMalfunction { get; set; } = new DoorConfig();
+
+        [Description("Door system breakdown module - a rare event that will lock all doors in facility for a few seconds.")]
+        public DoorSystemBreakdownConfig DoorSystemBreakdown { get; set; } = new DoorSystemBreakdownConfig();
+
 
         [Description("Show debug messages in console.")]
         public bool Debug { get; set; } = false;
@@ -32,7 +36,7 @@ namespace MoreHazards
     
     public class ElevatorsConfig
     {
-        [Description("Elevator Breakdown Module")]
+        [Description("EVENT: Elevators will sometimes breakdown and stop working")]
         public bool Enabled { get; set; } = false;
 
         [Description("List of all the elevators that can break down. AVAILABLE: LczA LczB Nuke Scp049 GateA GateB")]
@@ -42,7 +46,7 @@ namespace MoreHazards
         public RandomTiming RandomEventTiming { get; set; } = new RandomTiming(10,30,120,300);
 
         [Description("Chance of breaking down per elevator")]
-        public int ChancePerElevator { get; set; } = 30;
+        public int ChancePerElevator { get; set; } = 40;
         
         [Description("Will cause the room the elevator broke in to have disabled lights")]
         public bool BlackoutRoom { get; set; } = true;
@@ -77,10 +81,34 @@ namespace MoreHazards
     {
         public bool Enabled { get; set; } = false;
 
+        [Description("If a player controls SCP 079 this part of the plugin will be inactive.")]
+        public bool DisableIf079Exists { get; set; }  = true;
+
         [Description("Timing of the door malfunction event")]
-        public RandomInterval RandomEventTiming { get; set; } = new RandomInterval(10,30);
+        public RandomInterval RandomDoorMalfunctionTiming { get; set; } = new RandomInterval(5,15);
 
         [Description("Chance of a door closing per player")]
-        public int PerPlayerChance { get; set; } = 20;
+        public int PerPlayerChance { get; set; } = 60;
+
+        [Description("Roles that the doors wont close around.  Available: ChaosInsurgency ClassD FacilityGuard NtfCadet NtfCommander NtfLieutenant NtfScientist Scientist Scp049 Scp0492 Scp096 Scp106 Scp173 Tutorial Scp93953 Scp93989")]
+        public List<RoleType> IgnoredRoles { get; set; } = new List<RoleType>(new[] { RoleType.ChaosInsurgency,RoleType.Scp93953, RoleType.Scp93989, RoleType.Scp049, RoleType.Scp106, RoleType.Scp0492, RoleType.Scp173, RoleType.Scp096 });
+        
+    }
+
+    public class DoorSystemBreakdownConfig
+    {
+        public bool Enabled { get; set; } = false;
+
+        [Description("If true all doors will close just before getting locked.")]
+        public bool CloseBeforeLocking { get; set; } = false;
+
+        [Description("The cooldown and duration of this event.")]
+        public RandomTiming FullDoorSystemBreakdownTiming { get; set; } = new RandomTiming(5, 15, 140, 300);
+
+        [Description("Is the mesage below enabled")]
+        public bool UseCassieMessage { get; set; } = false;
+
+        [Description("The message that will play on door system breakdown")]
+        public CassieAnnouncement CassieMessageOnBreakdown { get; set; } = new CassieAnnouncement();
     }
 }

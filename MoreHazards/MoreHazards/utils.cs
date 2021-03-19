@@ -109,15 +109,5 @@ namespace MoreHazards
             return collection[index];
         }
     }
-
-    public class Debug
-    {
-        public static void Log(object msg)
-        {
-            if (MoreHazards.Instance.Config.Debug)
-            {
-                Exiled.API.Features.Log.Debug(msg);
-            }
-        }
-    }
+    
 }
