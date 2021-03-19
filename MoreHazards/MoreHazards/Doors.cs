@@ -60,7 +60,7 @@ namespace MoreHazards
                 {
                     if (MalfunctionConfig.IgnoredRoles.Contains(player.Role))
                         continue;
-
+                    
                     if (UnityEngine.Random.Range(0, 100) > MalfunctionConfig.PerPlayerChance)
                         continue;
 

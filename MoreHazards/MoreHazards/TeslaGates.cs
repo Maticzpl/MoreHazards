@@ -51,10 +51,10 @@ namespace MoreHazards
             foreach (var tesla in Map.TeslaGates)
             {
                 if (DisabledGates == MaxDisabledGates)
-                    return;
+                    break;
 
                 if (RandomGenerator.GetInt16(0, 100) > ChancePerGate)
-                    return;
+                    continue;
 
                 DisabledGates++;
                 SetTeslaEnabled(tesla, false);
