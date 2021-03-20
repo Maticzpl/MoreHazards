@@ -44,6 +44,9 @@ namespace MoreHazards
 
         public void DisableRandomGates(short ChancePerGate, short MaxDisabledGates, short GatesRequired)
         {
+            if (!Config.DisablingTeslas)
+                return;
+
             if (Map.TeslaGates.Count < GatesRequired)
                 return;
 

@@ -41,7 +41,6 @@ more_hazards:
     tesla_gate_disable_chance: 33
   # Elevators Module - Once in a while an elevator can breakdown.
   elevators:
-  # EVENT: Elevators will sometimes breakdown and stop working
     enabled: false
     # List of all the elevators that can break down. AVAILABLE: LczA LczB Nuke Scp049 GateA GateB
     breakable_elevators:

@@ -36,7 +36,6 @@ namespace MoreHazards
     
     public class ElevatorsConfig
     {
-        [Description("EVENT: Elevators will sometimes breakdown and stop working")]
         public bool Enabled { get; set; } = false;
 
         [Description("List of all the elevators that can break down. AVAILABLE: LczA LczB Nuke Scp049 GateA GateB")]

@@ -11,6 +11,7 @@ using Interactables.Interobjects;
 using Interactables.Interobjects.DoorUtils;
 using MEC;
 using Warhead = Exiled.Events.Handlers.Warhead;
+using Player = Exiled.Events.Handlers.Player;
 
 namespace MoreHazards
 {
@@ -20,22 +21,28 @@ namespace MoreHazards
         private static CoroutineHandle FullBreakdownHandle;
         private static readonly DoorConfig MalfunctionConfig = MoreHazards.Instance.Config.DoorMalfunction;
         private static readonly DoorSystemBreakdownConfig BreakdownConfig = MoreHazards.Instance.Config.DoorSystemBreakdown;
-
+        private static bool scp079Exists = false;
         public DoorLogicManager()
         {
             Warhead.Detonated += TerminateCoroutines;
+            Player.ChangingRole += OnRoleChange;
         }
 
         public override void Dispose()
         {
             base.Dispose();
             Warhead.Detonated -= TerminateCoroutines;
+            Player.ChangingRole -= OnRoleChange;
         }
 
         public override void OnRoundStart()
         {
-            if(MalfunctionConfig.Enabled)
+            if (MalfunctionConfig.Enabled
+                &&
+                !(scp079Exists && MalfunctionConfig.DisableIf079Exists))
+            {
                 RandomMalfunctionHandle = Timing.RunCoroutine(RandomDoorMalfunction());
+            }
 
             if (BreakdownConfig.Enabled)
                 FullBreakdownHandle = Timing.RunCoroutine(FullDoorBreakdown());
@@ -43,6 +50,19 @@ namespace MoreHazards
         public override void OnRoundEnd(RoundEndedEventArgs ev)
         {
             TerminateCoroutines();
+        }
+
+        public void OnRoleChange(ChangingRoleEventArgs ev)
+        {
+            if (!MalfunctionConfig.DisableIf079Exists)
+                return;
+
+            if (ev.NewRole == RoleType.Scp079)
+            {
+                scp079Exists = true;
+                Timing.KillCoroutines(RandomMalfunctionHandle);
+                Log.Debug("Door Malfunctions disabled, SCP079 exists",MoreHazards.Instance.Config.Debug);
+            }
         }
         public void TerminateCoroutines()
         {
@@ -56,7 +76,7 @@ namespace MoreHazards
             while (Round.IsStarted)
             {
                 yield return Timing.WaitForSeconds(MalfunctionConfig.RandomDoorMalfunctionTiming.GetInterval());
-                foreach (var player in Player.List)
+                foreach (var player in Exiled.API.Features.Player.List)
                 {
                     if (MalfunctionConfig.IgnoredRoles.Contains(player.Role))
                         continue;
