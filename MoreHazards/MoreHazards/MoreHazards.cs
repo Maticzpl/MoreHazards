@@ -20,26 +20,24 @@ namespace MoreHazards
 {
     public class MoreHazards : Plugin<Config>
     {
-        private static MoreHazards singleton = new MoreHazards();
-
         public override string Author { get; } = "Maticzpl";
         public override string Name { get; } = "More Hazards";
         public override Version Version { get; } = new Version(0, 2, 1);
         public override Version RequiredExiledVersion { get; } = new Version(2, 9, 0);
 
-        private MoreHazards()
-        {
-        }
 
         private static List<LogicManager> LogicHandlers = new List<LogicManager>();
-        public static MoreHazards Instance => singleton;
-
         public override PluginPriority Priority { get; } = PluginPriority.Medium;
 
+
+        private static MoreHazards Singleton;
+        public static MoreHazards Instance => Singleton;
 
         public override void OnEnabled()
         {
             base.OnEnabled();
+
+            Singleton = this; 
 
             LogicHandlers.Add(new TeslaGateManager());
             LogicHandlers.Add(new ElevatorLogicManager());
