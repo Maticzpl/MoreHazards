@@ -85,9 +85,15 @@ namespace MoreHazards
         [Description("Cassie Message Jam Chance (0-100)")]
         public int Jams { get; set; } = 10;
 
+        [Description("If false, disables glitches, jams and other noises")]
+        public bool Noise { get; set; } = true;
+
         public void Speak()
         {
-            Cassie.GlitchyMessage(Text, Glitches, Jams);
+            if (Noise)
+                Cassie.GlitchyMessage(Text, Glitches, Jams);
+            else
+                Cassie.Message(Text,false,false);
         }
     }
     public class CollectionUtils<TValue>

@@ -37,8 +37,8 @@ namespace MoreHazards
 
         public override void Dispose()
         {
-            base.Dispose();
             Warhead.Detonated -= OnDetonated;
+            base.Dispose();
         }
 
         public override void OnRoundStart()
