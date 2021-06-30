@@ -85,10 +85,18 @@ namespace MoreHazards
                         continue;
 
                     //random door of the room the player is inside
-                    var door = CollectionUtils<DoorVariant>.GetRandomElement((Map.FindParentRoom(player.GameObject).Doors));
-                    
-                    door.NetworkTargetState = false;
-                    Log.Debug("Door closed on player:"+player.Nickname);
+                    try
+                    {
+                        var door = CollectionUtils<DoorVariant>.GetRandomElement((Map.FindParentRoom(player.GameObject).Doors));
+
+                        door.NetworkTargetState = false;
+                        Log.Debug("Door closed on player:" + player.Nickname);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Debug(e + " No doors found", MoreHazards.Instance.Config.Debug);
+                        throw;
+                    }
                 }
             }
         }

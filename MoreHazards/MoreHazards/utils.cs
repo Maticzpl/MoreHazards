@@ -111,6 +111,9 @@ namespace MoreHazards
         public static TValue GetRandomElement(IEnumerable<TValue> enumerable)
         {
             var collection = (enumerable as IReadOnlyList<TValue>) ?? enumerable.ToArray();
+            if (collection.Count <= 0)
+                throw new Exception("Collection is empty");
+
             int index = UnityEngine.Random.Range(0, collection.Count - 1);
             return collection[index];
         }
