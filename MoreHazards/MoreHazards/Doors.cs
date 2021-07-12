@@ -90,7 +90,7 @@ namespace MoreHazards
                         var door = CollectionUtils<DoorVariant>.GetRandomElement((Map.FindParentRoom(player.GameObject).Doors));
 
                         door.NetworkTargetState = false;
-                        Log.Debug("Door closed on player:" + player.Nickname);
+                        Log.Debug("Door closed on player:" + player.Nickname, MoreHazards.Instance.Config.Debug);
                     }
                     catch (Exception e)
                     {
